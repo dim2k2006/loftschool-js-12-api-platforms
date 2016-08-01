@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+
+        <title>Список городов</title>
+    </head>
+    <body>
+        <div class="menu">
+            <a data-action="load" href="#">Загрузить список городов</a>
+        </div>
+
+        <div class="container">
+
+        </div>
+
+        <script src="index.js"></script>
+        <script type="text/x-handlebars-template" id="citiesTemplate">
+            <ul id="cityList">
+                {{#each list}}
+                <li>
+                    {{this}}
+                </li>
+                {{/each}}
+            </ul>
+        </script>
+    </body>
+</html>
