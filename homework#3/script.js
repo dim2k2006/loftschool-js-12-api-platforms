@@ -10,6 +10,11 @@ Handlebars.registerHelper('formatTime', function(time) {
 
 let globalPlayer = document.createElement('audio');
 let playingItem;
+let progressContainer = document.querySelector('.progress');
+let progresswidth = progressContainer.offsetWidth;
+let progressBar = document.querySelector('[data-role=progressbar]');
+let progressTitle = document.querySelector('.progress-name');
+let progressInited = false;
 
 new Promise(function(resolve) {
   if (document.readyState === 'complete') {
@@ -45,7 +50,6 @@ new Promise(function(resolve) {
   })
 }).then(function() {
   function onProgress(e) {
-    let progressBar = playingItem.querySelector('[data-role=progressbar]');
     let duration = e.target.duration;
     let currentTime = e.target.currentTime;
     let progress = parseInt(100 / duration * currentTime);
@@ -54,21 +58,20 @@ new Promise(function(resolve) {
   }
 
   function progressSwitch(event) {
-    console.log(event);
+    if (progressInited) {
+      var positionCurrent = event.layerX,
+          positionPercent = Math.ceil(100 / progresswidth * positionCurrent),
+          duration = globalPlayer.duration,
+          currentTime = (duration / 100 * positionPercent);
 
-    var width = event.target.offsetWidth,
-        positionCurrent = event.layerX,
-        positionPercent = parseInt(100 / width * positionCurrent);
-
-
-    console.log(width);
-    console.log(positionCurrent);
-    console.log(positionPercent);
+      globalPlayer.currentTime = currentTime;
+    }
   }
 
   function onPlay() {
     playingItem.querySelector('[data-role=playback]').className = 'glyphicon glyphicon-pause';
     mainPlaybackButton.querySelector('[data-role=playback]').className = 'glyphicon glyphicon-pause';
+    progressSetup();
   }
 
   function onPause() {
@@ -88,6 +91,18 @@ new Promise(function(resolve) {
 
   function onEnd() {
     toSong('next');
+  }
+
+  function progressSetup() {
+    var title = '';
+
+    if (playingItem) {
+      title = playingItem.querySelector('.title').innerHTML;
+    } else {
+      title = audioList.querySelector('li:first-child .title').innerHTML;
+    }
+
+    progressTitle.innerHTML = title;
   }
 
   prevSongButton.addEventListener('click', function() {
@@ -141,11 +156,18 @@ new Promise(function(resolve) {
   globalPlayer.addEventListener('timeupdate', onProgress);
   globalPlayer.addEventListener('ended', onEnd);
 
+  progressContainer.addEventListener('click', progressSwitch);
+
   results.addEventListener('click', function(e) {
     var target = e.target;
 
     if (e.target.getAttribute('data-role') === 'playback') {
       var currentItem = e.target.parentNode.parentNode.parentNode;
+
+      if (!progressInited) {
+        progressInited = true;
+        progressContainer.classList.toggle('active');
+      }
 
       if (currentItem === playingItem) {
         if (globalPlayer.paused) {
@@ -164,14 +186,6 @@ new Promise(function(resolve) {
         globalPlayer.play();
       }
     }
-
-    while (target != results) {
-      if (target.classList[0] == 'progress') {
-        progressSwitch(event);
-        return;
-      }
-      target = target.parentNode;
-    }
   }, true);
 
   return new Promise(function(resolve, reject) {
@@ -184,6 +198,8 @@ new Promise(function(resolve) {
         let template = templateFn({list: response.response});
 
         results.innerHTML = template;
+
+        progressSetup();
 
         resolve();
       }

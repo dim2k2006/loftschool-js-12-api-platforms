@@ -15,11 +15,30 @@
     .control-panel
     {
       padding: 6px 6px 20px;
+      text-align: left;
+    }
+
+    .control-progress {
+      padding: 6px 6px 20px;
+    }
+
+    .progress {
+      opacity: .4;
+      cursor: default;
+    }
+
+    .progress.active {
+      opacity: 1;
+      cursor: pointer;
     }
 
     .control-panel button
     {
       margin: 2px;
+    }
+
+    .progress-name {
+      margin-bottom: 5px;
     }
   </style>
 </head>
@@ -31,17 +50,26 @@
 </div>
 
 <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
-  <div class="container text-center control-panel" id="controlPanel">
-    <button type="button" class="btn btn-default btn-lg" id="prevSongButton">
-      <span class="glyphicon glyphicon-step-backward"></span>
-    </button>
-    <button type="button" class="btn btn-primary btn-lg" id="mainPlaybackButton">
-      <span class="glyphicon glyphicon-play" data-role="playback"></span>
-    </button>
-    <button type="button" class="btn btn-default btn-lg" id="nextSongButton">
-      <span class="glyphicon glyphicon-step-forward"></span>
-    </button>
+  <div class="container">
+    <div class="col-xs-2 control-panel" id="controlPanel">
+      <button type="button" class="btn btn-default btn-lg" id="prevSongButton">
+        <span class="glyphicon glyphicon-step-backward"></span>
+      </button>
+      <button type="button" class="btn btn-primary btn-lg" id="mainPlaybackButton">
+        <span class="glyphicon glyphicon-play" data-role="playback"></span>
+      </button>
+      <button type="button" class="btn btn-default btn-lg" id="nextSongButton">
+        <span class="glyphicon glyphicon-step-forward"></span>
+      </button>
+    </div>
+    <div class="col-xs-10 control-progress">
+      <div class="progress-name"></div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-danger" data-role="progressbar" style="width: 0%"></div>
+      </div>
+    </div>
   </div>
+
 </nav>
 
 <script src="script.js"></script>
@@ -56,13 +84,6 @@
           <span class="title">{{./artist}} - {{./title}}</span>
         </div>
         <div class="col-xs-2 text-right">{{formatTime duration}}</div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="progress">
-            <div class="progress-bar progress-bar-danger" data-role="progressbar" style="width: 0%"></div>
-          </div>
-        </div>
       </div>
     </li>
     {{/each}}
