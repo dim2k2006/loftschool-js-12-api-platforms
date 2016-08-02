@@ -79,31 +79,27 @@ var list = {
         });
     },
     compare: function(a, b) {
-        a = a.bdate || undefined;
-        b = b.bdate || undefined;
+        var currentYear = new Date().getFullYear(),
+            arrayA = a.bdate.split('.'),
+            arrayB = b.bdate.split('.');
 
-        if (a && b) {
+        arrayA.length = 3;
+        arrayB.length = 3;
 
-            a.split('.').reverse().join(', ');
-            console.log(a);
+        arrayA[2] = currentYear;
+        arrayB[2] = currentYear;
 
-        }
-
-        // a.split('.').reverse().join(', ');
-
-
-        // if (a > b) return 1;
-        // if (a < b) return -1;
+        a = arrayA.reverse().join(', ');
+        b = arrayB.reverse().join(', ');
+        
+        return new Date(b).getTime() - new Date(a).getTime()
     },
     render: function(data) {
         var dataHasDate = data.filter(function(item) {
             return item.bdate;
         });
 
-        
-
-        // console.log(data);
-        // data.sort(this.compare);
+        dataHasDate.sort(this.compare);
 
         var source = document.getElementById('listTemplate').innerHTML,
             templateFn = Handlebars.compile(source),
