@@ -13,9 +13,9 @@
     <div class="container">
         <div class="title">Список друзей</div>
 
-        <ul class="container__list">
+        <div class="container__content">
 
-        </ul>
+        </div>
     </div>
 
     <script src="index.js"></script>
@@ -23,10 +23,16 @@
         <ul class="container__list">
             {{#each list}}
             <li>
-                <div class="photo"></div>
-                <div class="name"></div>
-                <div class="age"></div>
-                <div class="date"></div>
+                <div class="photo">
+                    <img src="{{photo_100}}">
+                </div>
+                <div class="info">
+                    <div class="info__content">
+                        <div class="name">{{first_name}} {{last_name}}</div>
+                        <div class="age">{{getAge bdate}}</div>
+                        <div class="date">Дата рождения: {{bdate}}</div>
+                    </div>
+                </div>
             </li>
             {{/each}}
         </ul>
