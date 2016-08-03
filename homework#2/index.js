@@ -78,7 +78,7 @@ var list = {
             })
         });
     },
-    compare: function(a, b) {
+    sortData: function(a, b) {
         var currentYear = new Date().getFullYear(),
             arrayA = a.bdate.split('.'),
             arrayB = b.bdate.split('.');
@@ -89,21 +89,76 @@ var list = {
         arrayA[2] = currentYear;
         arrayB[2] = currentYear;
 
-        a = arrayA.reverse().join(', ');
-        b = arrayB.reverse().join(', ');
-        
-        return new Date(b).getTime() - new Date(a).getTime()
+        a = new Date(arrayA.reverse().join(', '));
+        b = new Date(arrayB.reverse().join(', '));
+
+        if (a.getMonth() > b.getMonth()) {
+
+            return 1;
+
+        } else if (a.getMonth() < b.getMonth()) {
+
+            return -1;
+
+        } else {
+
+            if (a.getDate() > b.getDate()) {
+
+                return 1;
+
+            } else if (a.getDate() < b.getDate()) {
+
+                return -1;
+
+            } else {
+
+                return 0;
+
+            }
+        }
+    },
+    compare: function(data) {
+        var dataHasDate = data.filter(function(item) {
+                return item.bdate;
+            }),
+            dataHasDateLength = dataHasDate.length,
+            i = 0,
+            next = [],
+            last = [],
+            now = new Date(),
+            currentYear = now.getFullYear(),
+            itemDate = [];
+
+        for (i; i < dataHasDateLength; i++) {
+
+            itemDate = dataHasDate[i].bdate.split('.');
+            itemDate.length = 3;
+            itemDate[2] = currentYear;
+            itemDate = itemDate.reverse().join(', ');
+            itemDate = new Date(itemDate);
+
+            if(itemDate.getMonth() >= now.getMonth() && itemDate.getDate() > now.getDate())
+
+                next.push(dataHasDate[i]);
+
+            else {
+
+                last.push(dataHasDate[i]);
+
+            }
+
+        }
+
+        next = next.sort(this.sortData);
+        last = last.sort(this.sortData);
+
+        return next.concat(last);
     },
     render: function(data) {
-        var dataHasDate = data.filter(function(item) {
-            return item.bdate;
-        });
-
-        dataHasDate.sort(this.compare);
-
-        var source = document.getElementById('listTemplate').innerHTML,
+        var filteredData = this.compare(data),
+            source = document.getElementById('listTemplate').innerHTML,
             templateFn = Handlebars.compile(source),
-            template = templateFn({list: dataHasDate});
+            template = templateFn({list: filteredData});
 
         this.content.innerHTML = template;
     },
